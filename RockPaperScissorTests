@@ -1,0 +1,37 @@
+import unittest
+from unittest.mock import patch
+from RockPaperScissor import UserInput, RandomActions, OnlyScissors, PaperOrRock, RockPaperScissorsGame
+
+class TestRockPaperScissor(unittest.TestCase):
+    @patch('builtins.input', side_effect=['r', 'p', 's', 'q'])
+    def test_user_input_valid(self, mock_input):
+        user_input = UserInput()
+        for _ in range(3):
+            user_action = user_input.get_user_input()
+            self.assertIn(user_action, ['r', 'p', 's', 'q'])
+
+    @patch('random.choice', return_value='r')
+    def test_random_actions(self, mock_random_choice):
+        random_actions = RandomActions()
+        ai_action = random_actions.get_move()
+        self.assertIn(ai_action, ['r', 'p', 's'])
+
+    def test_only_scissors(self):
+        ai_strategy = OnlyScissors()
+        ai_action = ai_strategy.get_move()
+        self.assertEqual(ai_action, 's')
+
+    @patch('random.choice', return_value='p')
+    def test_paper_or_rock(self, mock_random_choice):
+        paper_or_rock = PaperOrRock()
+        ai_action = paper_or_rock.get_move()
+        self.assertIn(ai_action, ['r', 'p'])
+
+    @patch('builtins.input', side_effect=['r', 'p', 's', 'q'])
+    def test_game_play(self, mock_input):
+        user_input = UserInput()
+        game = RockPaperScissorsGame(user_input)
+        game.play()
+
+if __name__ == '__main__':
+    unittest.main()

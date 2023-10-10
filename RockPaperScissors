@@ -1,0 +1,75 @@
+import random
+
+class UserInput:
+    def get_user_input(self):
+        return input("Enter a choice r for rock, p for paper, s for scissors (q to quit): ")
+
+class GameMoves:
+    def get_move(self):
+        pass
+
+class RandomActions(GameMoves):
+    def get_move(self):
+        actions = ["r", "p", "s"]
+        return random.choice(actions)
+
+class OnlyScissors(GameMoves):
+    def get_move(self):
+        return "s"
+
+class PaperOrRock(GameMoves):
+    def get_move(self):
+        actions = ["r", "p"]
+        return random.choice(actions)
+
+class RockPaperScissorsGame:
+    def __init__(self, user_input):
+        self.user_input = user_input
+        self.ai_strategies = [RandomActions(), OnlyScissors(), PaperOrRock()]
+        self.record = {
+            'wins': 0,
+            'draws': 0,
+            'losses': 0,
+        }
+        self.strategy_names = {
+            RandomActions: "Random Action Strategy",
+            OnlyScissors: "Only Scissors Strategy",
+            PaperOrRock: "Paper Or Rock Strategy",
+        }
+
+    def play(self):
+        while True:
+            user_action = self.user_input.get_user_input()
+
+            ai_strategy = random.choice(self.ai_strategies)
+            ai_strategy_name = self.strategy_names[type(ai_strategy)]
+            ai_action = ai_strategy.get_move()
+
+            print(f"\nYour move of choice {user_action}, AI Strategy: {ai_strategy_name} with the move of choice being {ai_action}.")
+
+            if user_action == ai_action:
+                print(f"Tie")
+                self.record['draws'] += 1
+            elif user_action in ['r', 'p', 's']:
+                if (user_action == 'r' and ai_action == 's') or (user_action == 'p' and ai_action == 'r') or (user_action == 's' and ai_action == 'p'):
+                    print(f"User Won")
+                    self.record['wins'] += 1
+                else:
+                    print(f"AI Won")
+                    self.record['losses'] += 1
+            elif user_action == 'q':
+                self.display_record()
+                break
+            else:
+                print(f"Invalid Input, please enter r, p, or s \n")
+
+    def display_record(self):
+        print(f"User Total Wins: {self.record['wins']}")
+        print(f"User Total Draws: {self.record['draws']}")
+        print(f"User Total Losses: {self.record['losses']}")
+
+# Entry point
+if __name__ == "__main__":
+    user_input = UserInput()
+    game = RockPaperScissorsGame(user_input)
+    game.play()
